@@ -303,8 +303,8 @@ model.fit(
     y_train,
     validation_data=(X_test, ytest),
     epochs=75,
-    batch_size=64,
-    verbose=1,
+    batch_size=64, #number of samples that will be propagated through the model at once during each training epoch
+    verbose=1, # determines the amount of information printed during the training process
 )  # trains the LSTM model using the fit method of Keras
 
 
@@ -328,8 +328,8 @@ len(train_predict)
 
 # plotting the data predicted, blue denotes the dataset values ,
 # orange denotes the train-set and the green denotes the predicted data set of the test data
-look_back = 75
-trainPredictPlot = np.empty_like(df)
+look_back = 75 #will use the 75 previous time steps as input to predict the next time step. 
+trainPredictPlot = np.empty_like(df) #creates a new array with the same shape and data type as an existing array but leaves its elements uninitialized.
 trainPredictPlot[:, :] = np.nan
 trainPredictPlot[look_back : len(train_predict) + look_back, :] = train_predict
 # shift test predictions for plotting
@@ -337,7 +337,7 @@ testPredictPlot = np.empty_like(df)
 testPredictPlot[:, :] = np.nan
 testPredictPlot[
     len(train_predict) + (look_back * 2) + 1 : len(df) - 1, :
-] = test_predict
+] = test_predict #predicted values for the test set
 
 # plot baseline and predictions
 
@@ -371,20 +371,20 @@ temp_input
 # prediction of the 30 Days
 
 lst_output = []
-n_steps = 75
+n_steps = 75  #number of previous time steps used as input for predictions.
 i = 0
-while i < 30:
+while i < 30: #iterates for a total of 30 steps, generating predictions for each step.
     if len(temp_input) > 75:
         # print(temp_input)
         x_input = np.array(temp_input[1:])
         print("{} day input {}".format(i, x_input))
-        x_input = x_input.reshape(1, -1)
-        x_input = x_input.reshape((1, n_steps, 1))
+        x_input = x_input.reshape(1, -1) #convert a 2-dimensional array into a 1-dimensional array
+        x_input = x_input.reshape((1, n_steps, 1)) #input is reshaped to match the expected input shape of the model
         # print(x_input)
-        yhat = model.predict(x_input, verbose=0)
+        yhat = model.predict(x_input, verbose=0) #predicted values obtained from the model yhat
         print("{} day output {}".format(i, yhat))
-        temp_input.extend(yhat[0].tolist())
-        temp_input = temp_input[1:]
+        temp_input.extend(yhat[0].tolist()) # to convert the NumPy array to a regular Python list. This is done because extend() method works with Python lists, not NumPy arrays.
+        temp_input = temp_input[1:] #the oldest value in the window is discarded, and the list now contains the updated input sequence for the next predictionthe oldest value in the window is discarded, and the list now contains the updated input sequence for the next prediction
         # print(temp_input)
         lst_output.extend(yhat.tolist())
         i = i + 1
